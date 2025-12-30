@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A335" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="NO" userDefinedModelVersionIdentifier="">
+
+    <!-- Transaction Entity -->
+    <entity name="Transaction" representedClassName="Transaction" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="amount" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="transactionDescription" attributeType="String"/>
+        <attribute name="rawInput" optional="YES" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- AI-enhanced fields -->
+        <attribute name="category" attributeType="String" defaultValueString="Uncategorized"/>
+        <attribute name="categoryConfidence" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="aiSuggestedCategory" optional="YES" attributeType="String"/>
+        <attribute name="isRecurring" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="recurringPattern" optional="YES" attributeType="String"/>
+
+        <!-- Metadata -->
+        <attribute name="isAIProcessed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="needsSync" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="syncedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- Relationships -->
+        <relationship name="budget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Budget" inverseName="transactions" inverseEntity="Budget"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="transactions" inverseEntity="Tag"/>
+
+        <!-- Indexes for performance -->
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="descending"/>
+        </fetchIndex>
+        <fetchIndex name="byCategoryIndex">
+            <fetchIndexElement property="category" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byDateAndCategoryIndex">
+            <fetchIndexElement property="date" type="Binary" order="descending"/>
+            <fetchIndexElement property="category" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+
+    <!-- Budget Entity -->
+    <entity name="Budget" representedClassName="Budget" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="category" attributeType="String"/>
+        <attribute name="limit" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="period" attributeType="String" defaultValueString="monthly"/>
+        <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- AI-enhanced fields -->
+        <attribute name="isAISuggested" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="aiRationale" optional="YES" attributeType="String"/>
+
+        <!-- UI customization -->
+        <attribute name="color" attributeType="String" defaultValueString="#007AFF"/>
+        <attribute name="icon" attributeType="String" defaultValueString="dollarsign.circle"/>
+
+        <!-- Metadata -->
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- Relationships -->
+        <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Transaction" inverseName="budget" inverseEntity="Transaction"/>
+    </entity>
+
+    <!-- SavingsGoal Entity -->
+    <entity name="SavingsGoal" representedClassName="SavingsGoal" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="targetAmount" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="currentAmount" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="deadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="priority" attributeType="Integer 16" defaultValueString="3" usesScalarValueType="YES"/>
+
+        <!-- AI-enhanced fields -->
+        <attribute name="isAISuggested" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="aiStrategy" optional="YES" attributeType="String"/>
+        <attribute name="predictedCompletionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- Metadata -->
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+    </entity>
+
+    <!-- AIInsight Entity -->
+    <entity name="AIInsight" representedClassName="AIInsight" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="type" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="message" attributeType="String"/>
+        <attribute name="priority" attributeType="String" defaultValueString="medium"/>
+
+        <!-- User interaction -->
+        <attribute name="isRead" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isDismissed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="userFeedback" optional="YES" attributeType="String"/>
+
+        <!-- Metadata -->
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- Relationships - we'll keep these simple for now -->
+        <attribute name="relatedBudgetId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="relatedGoalId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+
+        <!-- Indexes for performance -->
+        <fetchIndex name="byActiveInsightsIndex">
+            <fetchIndexElement property="isDismissed" type="Binary" order="ascending"/>
+            <fetchIndexElement property="createdAt" type="Binary" order="descending"/>
+        </fetchIndex>
+    </entity>
+
+    <!-- ChatMessage Entity -->
+    <entity name="ChatMessage" representedClassName="ChatMessage" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="content" attributeType="String"/>
+        <attribute name="role" attributeType="String"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="conversationId" attributeType="UUID" usesScalarValueType="NO"/>
+
+        <!-- Metadata -->
+        <attribute name="tokensUsed" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+
+        <!-- Indexes for performance -->
+        <fetchIndex name="byConversationIndex">
+            <fetchIndexElement property="conversationId" type="Binary" order="ascending"/>
+            <fetchIndexElement property="timestamp" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+
+    <!-- Tag Entity -->
+    <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="color" attributeType="String" defaultValueString="#007AFF"/>
+
+        <!-- Relationships -->
+        <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Transaction" inverseName="tags" inverseEntity="Transaction"/>
+    </entity>
+
+    <!-- UserPreferences Entity -->
+    <entity name="UserPreferences" representedClassName="UserPreferences" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+
+        <!-- Income settings -->
+        <attribute name="monthlyIncome" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="hasVariableIncome" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="incomeFrequency" attributeType="String" defaultValueString="monthly"/>
+
+        <!-- AI preferences -->
+        <attribute name="enablePredictiveAlerts" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="aiSuggestionFrequency" attributeType="String" defaultValueString="daily"/>
+
+        <!-- UI preferences -->
+        <attribute name="currency" attributeType="String" defaultValueString="USD"/>
+        <attribute name="firstDayOfWeek" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+
+        <!-- Sync -->
+        <attribute name="lastSyncDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+
+    <!-- IncomeEntry Entity -->
+    <entity name="IncomeEntry" representedClassName="IncomeEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="amount" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="source" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isRecurring" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+
+        <!-- Variable income support -->
+        <attribute name="isVariable" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="expectedAmount" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+
+        <!-- Metadata -->
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+
+        <!-- Indexes for performance -->
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="descending"/>
+        </fetchIndex>
+    </entity>
+
+    <!-- QueuedAIOperation Entity - for offline queue -->
+    <entity name="QueuedAIOperation" representedClassName="QueuedAIOperation" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="operationData" attributeType="Binary"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="retryCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+
+    <!-- Layout positions for visual editor -->
+    <elements>
+        <element name="Transaction" positionX="-63" positionY="-18" width="128" height="299"/>
+        <element name="Budget" positionX="160" positionY="-18" width="128" height="239"/>
+        <element name="SavingsGoal" positionX="160" positionY="270" width="128" height="209"/>
+        <element name="AIInsight" positionX="-63" positionY="320" width="128" height="194"/>
+        <element name="ChatMessage" positionX="-270" positionY="-18" width="128" height="119"/>
+        <element name="Tag" positionX="-270" positionY="150" width="128" height="89"/>
+        <element name="UserPreferences" positionX="370" positionY="-18" width="128" height="179"/>
+        <element name="IncomeEntry" positionX="370" positionY="210" width="128" height="149"/>
+        <element name="QueuedAIOperation" positionX="-270" positionY="280" width="128" height="89"/>
+    </elements>
+</model>
